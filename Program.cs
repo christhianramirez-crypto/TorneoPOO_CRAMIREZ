@@ -2,7 +2,7 @@
 
 Jugador objJugador1 = new Jugador("Piero Hincapié", 24, 3, "Defensa");
 
-Jugador objJugador2 = new Jugador("Enner Valencia", 36, 13, "Delantero");
+Jugador objJugador2 = new Jugador("Enner Valencia", 36, 200, "Delantero");
 
 Equipo objEquipo1 = new Equipo("Emelec", "Guayaquil");
 
