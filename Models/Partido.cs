@@ -11,18 +11,20 @@ namespace TorneoPOO_CRAMIREZ.Models
         public DateTime Fecha { get; set; }
         public string Lugar { get; set; }
 
-        public void Programar(Equipo local, Equipo visitante, DateTime fecha, string lugar)
+        public Partido(Equipo local, Equipo visitante, DateTime fecha, string lugar)
         {
-            this.Lugar = lugar;
             this.Local = local;
             this.Visitante = visitante;
             this.Fecha = fecha;
-            Console.WriteLine("Partido programado correctamente");
+            this.Lugar = lugar;
         }
 
         public void MostrarResumen()
         {
             Console.WriteLine($"Hay un partido programado entre el local {this.Local.Nombre} y el visitante {this.Visitante.Nombre} en el lugar {this.Lugar}");
         }
+
+
+
     }
 }
