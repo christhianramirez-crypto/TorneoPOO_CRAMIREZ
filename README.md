@@ -13,3 +13,6 @@ Creacion de propiedades
 Modificadores de acceso
 Validaciones en las propiedades 
 tres por cada Clase
+//////////// 
+Creación de Menú 
+Almacenamiento de datos en memoria (Listas estáticas)
