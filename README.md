@@ -7,3 +7,9 @@ Comportamientos de las clases
 Creacion de metodos
 creacion de constructores
 Validacion de Datos
+
+2026-07-14
+Creacion de propiedades
+Modificadores de acceso
+Validaciones en las propiedades 
+tres por cada Clase

@@ -7,28 +7,76 @@ namespace TorneoPOO_CRAMIREZ.Models
     public class Jugador
     {
         //ATRIBUTOS O CARACTERISTICAS
-        public string Nombre { get; set; }
-        public int Edad { get; set; }
-        public int Numero { get; set; }
-        public string Posicion { get; set; }
+        private string nombre;
+        private int edad;
+        private int numero;
+        private string posicion;
+        private string lugarNacimiento;
+        private string cedula;
+        private decimal sueldo;
+        public string Nombre { get => nombre; set => nombre = value; }
+        public int Edad
+        {
+            get => edad;
+            set
+            {
+                if (!EsMayorEdad(value))
+                {
+                    throw new Exception("El jugador debe ser mayor de edad");
+                }
+                edad = value;
+            }
+
+        }
+        public int Numero
+        {
+            get => numero;
+            set
+            {
+                if (!EsNumeroValido(value))
+                {
+                    throw new Exception("El número de la camiseta no es válido");
+                }
+                numero = value;
+            }
+        }
+        public string Posicion { get => posicion; set => posicion = value; }
+        public string LugarNacimiento { get => lugarNacimiento; set => lugarNacimiento = value; }
+        public string Cedula
+        {
+            get => cedula;
+            set
+            {
+                if (value.Length != 10)
+                {
+                    throw new Exception("La cédula debe tener 10 dígitos");
+                }
+                cedula = value;
+            }
+        }
+        public decimal Sueldo
+        {
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new Exception("El sueldo no puede ser menor o igual a cero");
+                }
+                sueldo = value;
+            }
+        }
 
 
         //Constructor
-        public Jugador(string nombre, int edad, int numero, string posicion)
+        public Jugador(string nombre, int edad, int numero, string posicion, string lugarNacimiento, string cedula, decimal sueldo)
         {
-            if (!EsMayorEdad(edad))
-            {
-                throw new Exception("El jugador debe ser mayor de edad");
-            }
-            if (!EsNumeroValido(numero))
-            {
-                throw new Exception("El número de la camiseta no es válido");
-            }
-
             this.Nombre = nombre;
             this.Edad = edad;
             this.Numero = numero;
             this.Posicion = posicion;
+            this.LugarNacimiento = lugarNacimiento;
+            this.Cedula = cedula;
+            this.Sueldo = sueldo;
         }
 
 
