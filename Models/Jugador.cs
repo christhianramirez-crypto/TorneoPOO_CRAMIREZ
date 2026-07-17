@@ -14,6 +14,7 @@ namespace TorneoPOO_CRAMIREZ.Models
         private string lugarNacimiento;
         private string cedula;
         private decimal sueldo;
+        private string fichado;
         public string Nombre { get => nombre; set => nombre = value; }
         public int Edad
         {
@@ -66,7 +67,7 @@ namespace TorneoPOO_CRAMIREZ.Models
             }
         }
 
-
+        public string Fichado { get => fichado; }
         //Constructor
         public Jugador(string nombre, int edad, int numero, string posicion, string lugarNacimiento, string cedula, decimal sueldo)
         {
@@ -77,6 +78,7 @@ namespace TorneoPOO_CRAMIREZ.Models
             this.LugarNacimiento = lugarNacimiento;
             this.Cedula = cedula;
             this.Sueldo = sueldo;
+            this.fichado = "N";
         }
 
 
@@ -109,6 +111,23 @@ namespace TorneoPOO_CRAMIREZ.Models
             {
                 return false;
             }
+        }
+
+        public void Imprimir()
+        {
+            Console.WriteLine($"Cédula: {this.Cedula}");
+            Console.WriteLine($"Nombre: {this.Nombre}");
+            Console.WriteLine($"Edad: {this.Edad}");
+            Console.WriteLine($"Lugar de Nacimiento: {this.LugarNacimiento}");
+            Console.WriteLine($"Número: {this.Numero}");
+            Console.WriteLine($"Posición: {this.Posicion}");
+            Console.WriteLine($"Sueldo: {this.sueldo}");
+            Console.WriteLine($"Fichado: {this.Fichado}");
+        }
+
+        private void Fichar()
+        {
+            this.fichado = "S";
         }
 
     }
