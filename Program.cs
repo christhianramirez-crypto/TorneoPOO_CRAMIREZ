@@ -64,17 +64,217 @@ do
             actualizarEquipo();
             break;
         case 10:
-            crearPartido();
+            eliminarEquipo();
             break;
         case 11:
-            Console.WriteLine("Saliendo del programa...");
+            crearPartido();
             break;
-        default:
-            Console.WriteLine("Opción inválida. Por favor, intente nuevamente.");
+        case 12:
+            listarPartidos();
+            break;
+        case 13:
+            buscarPartido();
+            break;
+        case 14:
+            actualizarPartido();
+            break;
+        case 15:
+            eliminarPartido();
+            break;
+        case 16:
+            Console.WriteLine("Saliendo del programa...");
             break;
     }
 
-} while (opcion != 11);
+} while (opcion != 16);
+
+void eliminarPartido()
+{
+    Console.Clear();
+    Console.WriteLine("**********Eliminar Partido**********");
+
+    Console.Write("Nombre del equipo local: ");
+    string nombre = Console.ReadLine();
+
+    Partido partido = Database.Partidos.Find(p => p.Local.Nombre.ToUpper() == nombre.ToUpper());
+
+    if (partido != null)
+    {
+        partido.Imprimir();
+
+        Console.Write("¿Desea eliminar este partido? S/N: ");
+
+        if (Console.ReadLine().ToUpper() == "S")
+        {
+            Database.Partidos.Remove(partido);
+            Console.WriteLine("Partido eliminado correctamente.");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Partido no encontrado.");
+    }
+
+    Console.ReadLine();
+}
+void actualizarPartido()
+{
+    Console.Clear();
+    Console.WriteLine("**********Actualizar Partido**********");
+
+    Console.Write("Nombre del equipo local: ");
+    string nombre = Console.ReadLine();
+
+    Partido partido = Database.Partidos.Find(p => p.Local.Nombre.ToUpper() == nombre.ToUpper());
+
+    if (partido != null)
+    {
+        Console.Write("Nuevo lugar: ");
+        partido.Lugar = Console.ReadLine();
+
+        Console.Write("Nueva fecha: ");
+        partido.Fecha = Convert.ToDateTime(Console.ReadLine());
+
+        Console.WriteLine("Partido actualizado.");
+    }
+    else
+    {
+        Console.WriteLine("Partido no encontrado.");
+    }
+
+    Console.ReadLine();
+}
+void buscarPartido()
+{
+    Console.Clear();
+    Console.WriteLine("**********Buscar Partido**********");
+
+    Console.Write("Nombre del equipo local: ");
+    string nombre = Console.ReadLine();
+
+    Partido partido = Database.Partidos.Find(p => p.Local.Nombre.ToUpper() == nombre.ToUpper());
+
+    if (partido != null)
+    {
+        partido.Imprimir();
+    }
+    else
+    {
+        Console.WriteLine("Partido no encontrado.");
+    }
+
+    Console.ReadLine();
+}
+void listarPartidos()
+{
+    Console.Clear();
+    Console.WriteLine("**********Lista de Partidos**********");
+
+    foreach (Partido partido in Database.Partidos)
+    {
+        partido.Imprimir();
+        Console.WriteLine("--------------------------------");
+    }
+
+    Console.ReadLine();
+}
+void crearPartido()
+{
+    Console.Clear();
+    Console.WriteLine("**********Crear Partido**********");
+
+    Console.Write("Nombre del equipo local: ");
+    string local = Console.ReadLine();
+
+    Equipo objLocal = Database.Equipos.Find(e => e.Nombre.ToUpper() == local.ToUpper());
+
+    Console.Write("Nombre del equipo visitante: ");
+    string visitante = Console.ReadLine();
+
+    Equipo objVisitante = Database.Equipos.Find(e => e.Nombre.ToUpper() == visitante.ToUpper());
+
+    if (objLocal != null && objVisitante != null)
+    {
+        Console.Write("Lugar: ");
+        string lugar = Console.ReadLine();
+
+        Console.Write("Fecha (dd/mm/yyyy): ");
+        DateTime fecha = Convert.ToDateTime(Console.ReadLine());
+
+        Partido partido = new Partido(objLocal, objVisitante, fecha, lugar);
+
+        Database.Partidos.Add(partido);
+
+        Console.WriteLine("Partido creado correctamente.");
+    }
+    else
+    {
+        Console.WriteLine("Uno de los equipos no existe.");
+    }
+
+    Console.ReadLine();
+}
+
+void eliminarEquipo()
+{
+    Console.Clear();
+    Console.WriteLine("**********Eliminar Equipo**********");
+    Console.Write("Ingrese el nombre del equipo: ");
+    string nombre = Console.ReadLine();
+
+    Equipo objEquipo = Database.Equipos.Find(e => e.Nombre.ToUpper() == nombre.ToUpper());
+
+    if (objEquipo != null)
+    {
+        objEquipo.Imprimir();
+
+        Console.Write("¿Desea eliminar este equipo? S/N: ");
+
+        if (Console.ReadLine().ToUpper() == "S")
+        {
+            Database.Equipos.Remove(objEquipo);
+            Console.WriteLine("Equipo eliminado.");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Equipo no encontrado.");
+    }
+
+    Console.ReadLine();
+}
+
+void actualizarEquipo()
+{
+    Console.Clear();
+    Console.WriteLine("**********Actualizar Equipo**********");
+    Console.Write("Ingrese el nombre del equipo: ");
+    string nombre = Console.ReadLine();
+
+    Equipo objEquipo = Database.Equipos.Find(e => e.Nombre.ToUpper() == nombre.ToUpper());
+
+    if (objEquipo != null)
+    {
+        objEquipo.Imprimir();
+
+        Console.Write("Nuevo nombre: ");
+        objEquipo.Nombre = Console.ReadLine();
+
+        Console.Write("Nueva ciudad: ");
+        objEquipo.Ciudad = Console.ReadLine();
+
+        Console.Write("Nuevo color: ");
+        objEquipo.Color = Console.ReadLine();
+
+        Console.WriteLine("Equipo actualizado correctamente.");
+    }
+    else
+    {
+        Console.WriteLine("Equipo no encontrado.");
+    }
+
+    Console.ReadLine();
+}
 
 void buscarEquipo()
 {
@@ -108,7 +308,7 @@ void listarEquipos()
     Console.ReadLine();
 }
 
-void actualizarEquipo()
+void ActualizarEquipo()
 {
 
     Console.Clear();
@@ -225,7 +425,7 @@ void listarJugadores()
     Console.ReadLine();
 }
 
-void crearPartido()
+void CrearPartido()
 {
     Console.Clear();
 }

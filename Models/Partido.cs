@@ -57,6 +57,12 @@ namespace TorneoPOO_CRAMIREZ.Models
         }
 
         //AÑADIR IMPRIMIR PARTIDO
-
+        public void Imprimir()
+        {
+            Console.WriteLine($"Local      : {Local.Nombre}");
+            Console.WriteLine($"Visitante  : {Visitante.Nombre}");
+            Console.WriteLine($"Fecha      : {Fecha:dd/MM/yyyy}");
+            Console.WriteLine($"Lugar      : {Lugar}");
+        }
     }
 }
