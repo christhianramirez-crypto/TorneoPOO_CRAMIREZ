@@ -18,6 +18,7 @@ namespace TorneoPOO_CRAMIREZ.Models
         private string fichado;
         private Equipo equipo_actual;
         private int id;
+
         public string Nombre { get => nombre; set => nombre = value; }
         public int Edad
         {
@@ -60,19 +61,28 @@ namespace TorneoPOO_CRAMIREZ.Models
         }
         public decimal Sueldo
         {
+            get
+            {
+                return sueldo;
+            }
             set
             {
-                if (value <= 0)
+                if (value > 0)
                 {
-                    throw new Exception("El sueldo no puede ser menor o igual a cero");
+                    sueldo = value;
                 }
-                sueldo = value;
+                else
+                {
+                    sueldo = 0;
+                }
             }
         }
 
         public string Fichado { get => fichado; }
 
         public int Id { get => id; set => id = value; }
+
+
         //Constructor
         public Jugador(string nombre, int edad, int numero, string posicion, string lugarNacimiento, string cedula, decimal sueldo)
         {
@@ -94,6 +104,9 @@ namespace TorneoPOO_CRAMIREZ.Models
                 this.id = Database.Jugadores.Max(x => x.id) + 1;
             }
         }
+
+
+
 
 
 
