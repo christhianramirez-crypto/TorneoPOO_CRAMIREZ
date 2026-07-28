@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TorneoPOO_CRAMIREZ.Generales;
 
 namespace TorneoPOO_CRAMIREZ.Models
 {
@@ -16,6 +17,7 @@ namespace TorneoPOO_CRAMIREZ.Models
         public Equipo Visitante { get => visitante; set => visitante = value; }
         public DateTime Fecha { get => fecha; set => fecha = value; }
         public string Lugar { get => lugar; set => lugar = value; }
+        public int Id { get => id; set => id = value; }
 
         public Partido(Equipo local, Equipo visitante, DateTime fecha, string lugar)
         {
@@ -47,6 +49,14 @@ namespace TorneoPOO_CRAMIREZ.Models
             this.Visitante = visitante;
             this.Fecha = fecha;
             this.Lugar = lugar;
+            if (Database.Partidos.Count == 0)
+            {
+                this.id = 1;
+            }
+            else
+            {
+                this.id = Database.Partidos.Max(x => x.id) + 1;
+            }
         }
 
 
@@ -59,6 +69,7 @@ namespace TorneoPOO_CRAMIREZ.Models
         //AÑADIR IMPRIMIR PARTIDO
         public void Imprimir()
         {
+            Console.WriteLine($"Id del partido: {this.Id}");
             Console.WriteLine($"Local      : {Local.Nombre}");
             Console.WriteLine($"Visitante  : {Visitante.Nombre}");
             Console.WriteLine($"Fecha      : {Fecha:dd/MM/yyyy}");

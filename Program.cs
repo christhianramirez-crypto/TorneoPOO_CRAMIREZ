@@ -1,13 +1,8 @@
 ﻿using TorneoPOO_CRAMIREZ.Generales;
 using TorneoPOO_CRAMIREZ.Models;
 
+Database.CargarDatos();
 int opcion = 0;
-Jugador objJug1 = new Jugador("Christhian", 44, 18, "Volante", "Milagro", "0919509448", 80000);
-Jugador objJug2 = new Jugador("David", 34, 14, "Defensa", "Cuenca", "0123456789", 60000);
-Jugador objJug3 = new Jugador("Emiliano", 26, 23, "Arquero", "Daule", "1234567890", 90000);
-Database.Jugadores.Add(objJug1);
-Database.Jugadores.Add(objJug2);
-Database.Jugadores.Add(objJug3);
 do
 {
     Console.Clear();
@@ -345,6 +340,7 @@ void EliminarJugador()
         if (Console.ReadLine().ToUpper() == "S")
         {
             Database.Jugadores.Remove(objJugador);
+            Database.GuardarJugadores();
             Console.WriteLine("Jugador eliminado exitosamente.");
         }
         else
@@ -384,6 +380,7 @@ void ActualizarJugador()
         objJugador.LugarNacimiento = Console.ReadLine();
         Console.WriteLine("Ingrese el nuevo sueldo del jugador: ");
         objJugador.Sueldo = Convert.ToDecimal(Console.ReadLine());
+        Database.GuardarJugadores();
         Console.WriteLine("Jugador actualizado exitosamente.");
     }
     else
@@ -491,6 +488,7 @@ void crearJugador()
 
     Jugador objJugador = new Jugador(nombre, edad, numero, posicion, lugarNacimiento, cedula, sueldo);
     Database.Jugadores.Add(objJugador);
+    Database.GuardarJugadores();
     Console.WriteLine("Jugador creado exitosamente.");
     Console.ReadLine();
 }

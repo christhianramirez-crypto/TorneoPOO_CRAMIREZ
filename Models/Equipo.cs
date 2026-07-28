@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TorneoPOO_CRAMIREZ.Generales;
 
 namespace TorneoPOO_CRAMIREZ.Models
 {
@@ -10,10 +11,12 @@ namespace TorneoPOO_CRAMIREZ.Models
         private string ciudad;
         private string color;
         private List<Jugador> jugadores;
+        private int id;
         public string Nombre { get => nombre; set => nombre = value; }
         public string Ciudad { get => ciudad; set => ciudad = value; }
         public List<Jugador> Jugadores { get => jugadores; set => jugadores = value; }
         public string Color { get => color; set => color = value; }
+        public int Id { get => id; set => id = value; }
 
         public Equipo(string nombre, string ciudad, string color)
         {
@@ -33,6 +36,14 @@ namespace TorneoPOO_CRAMIREZ.Models
             this.Ciudad = ciudad;
             this.Jugadores = new List<Jugador>();
             this.color = color;
+            if (Database.Equipos.Count == 0)
+            {
+                this.id = 1;
+            }
+            else
+            {
+                this.id = Database.Equipos.Max(x => x.id) + 1;
+            }
         }
 
         public void AgregarJugador(Jugador objJugador)
@@ -72,6 +83,7 @@ namespace TorneoPOO_CRAMIREZ.Models
 
         public void Imprimir()
         {
+            Console.WriteLine($"Id: {this.Id}");
             Console.WriteLine($"Nombre del equipo: {this.Nombre}");
             Console.WriteLine($"Ciudad del equipo: {this.Ciudad}");
             Console.WriteLine($"Color del equipo: {this.Color}");
