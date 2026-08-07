@@ -1,4 +1,5 @@
-﻿using TorneoPOO_CRAMIREZ.Generales;
+﻿using TorneoPOO_CRAMIREZ.Datos;
+using TorneoPOO_CRAMIREZ.Generales;
 using TorneoPOO_CRAMIREZ.Models;
 
 Database.CargarDatos();
@@ -487,8 +488,14 @@ void crearJugador()
     decimal sueldo = Convert.ToDecimal(Console.ReadLine());
 
     Jugador objJugador = new Jugador(nombre, edad, numero, posicion, lugarNacimiento, cedula, sueldo);
-    Database.Jugadores.Add(objJugador);
-    Database.GuardarJugadores();
+    using (var context = new TorneoDbContext())
+    {
+        context.Jugadores.Add(objJugador);
+        context.SaveChanges();
+    }
+
+    //Database.Jugadores.Add(objJugador);
+    //Database.GuardarJugadores();
     Console.WriteLine("Jugador creado exitosamente.");
     Console.ReadLine();
 }

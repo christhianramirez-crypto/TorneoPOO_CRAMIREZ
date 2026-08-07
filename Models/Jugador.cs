@@ -16,9 +16,9 @@ namespace TorneoPOO_CRAMIREZ.Models
         private string cedula;
         private decimal sueldo;
         private string fichado;
-        private Equipo equipo_actual;
+        private Equipo? equipo_actual;
         private int id;
-
+        private int? equipoId { get; set; }
         public string Nombre { get => nombre; set => nombre = value; }
         public int Edad
         {
@@ -81,7 +81,8 @@ namespace TorneoPOO_CRAMIREZ.Models
         public string Fichado { get => fichado; }
 
         public int Id { get => id; set => id = value; }
-
+        public int? EquipoId { get => equipoId; set => equipoId = value; }
+        public Equipo? EquipoActual { get => equipo_actual; set => equipo_actual = value; }
 
         //Constructor
         public Jugador(string nombre, int edad, int numero, string posicion, string lugarNacimiento, string cedula, decimal sueldo)
@@ -94,20 +95,15 @@ namespace TorneoPOO_CRAMIREZ.Models
             this.Cedula = cedula;
             this.Sueldo = sueldo;
             this.fichado = "N";
-            this.equipo_actual = null;
-            if (Database.Jugadores.Count == 0)
-            {
-                this.id = 1;
-            }
-            else
-            {
-                this.id = Database.Jugadores.Max(x => x.id) + 1;
-            }
+            this.EquipoActual = null;
+            this.EquipoId = null;
+
         }
-
-
-
-
+        public Jugador()
+        {
+            this.fichado = "N";
+            this.equipo_actual = null;
+        }
 
 
         //METODOS, COMPORTAMIENTOS O FUNCIONES
