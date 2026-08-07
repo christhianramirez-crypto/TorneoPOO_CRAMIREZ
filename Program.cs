@@ -341,7 +341,7 @@ void EliminarJugador()
         Console.WriteLine($"¿Está seguro de que desea eliminar al jugador {objJugador.Nombre} ? S/N:");
         if (Console.ReadLine().ToUpper() == "S")
         {
-            Database.Jugadores.Remove(objJugador);
+            contex.Jugadores.Remove(objJugador);
             contex.SaveChanges();
             Console.WriteLine("Jugador eliminado exitosamente.");
         }
