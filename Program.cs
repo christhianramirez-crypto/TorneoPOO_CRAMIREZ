@@ -331,7 +331,8 @@ void EliminarJugador()
     Console.WriteLine("**********Elimar Jugador**********");
     Console.WriteLine("Ingrese la cédula del jugador a eliminar: ");
     string cedulaIngresada = Console.ReadLine();
-    Jugador objJugador = Database.Jugadores.Find(j => j.Cedula == cedulaIngresada);
+    var contex = new TorneoDbContext();
+    Jugador objJugador = contex.Jugadores.Where(j => j.Cedula == cedulaIngresada).FirstOrDefault();
     if (objJugador != null)
     {
         Console.WriteLine("-----------------------------------");
@@ -341,7 +342,7 @@ void EliminarJugador()
         if (Console.ReadLine().ToUpper() == "S")
         {
             Database.Jugadores.Remove(objJugador);
-            Database.GuardarJugadores();
+            contex.SaveChanges();
             Console.WriteLine("Jugador eliminado exitosamente.");
         }
         else
@@ -362,7 +363,8 @@ void ActualizarJugador()
     Console.WriteLine("**********Actualizar Jugador**********");
     Console.WriteLine("Ingrese la cédula del jugador a actualizar: ");
     string cedulaIngresada = Console.ReadLine();
-    Jugador objJugador = Database.Jugadores.Find(j => j.Cedula == cedulaIngresada);
+    var contex = new TorneoDbContext();
+    Jugador objJugador = contex.Jugadores.Where(j => j.Cedula == cedulaIngresada).FirstOrDefault();
     if (objJugador != null)
     {
         Console.WriteLine("Jugador encontrado:");
@@ -381,7 +383,7 @@ void ActualizarJugador()
         objJugador.LugarNacimiento = Console.ReadLine();
         Console.WriteLine("Ingrese el nuevo sueldo del jugador: ");
         objJugador.Sueldo = Convert.ToDecimal(Console.ReadLine());
-        Database.GuardarJugadores();
+        contex.SaveChanges();
         Console.WriteLine("Jugador actualizado exitosamente.");
     }
     else
@@ -397,7 +399,8 @@ void BuscarJugador()
     Console.WriteLine("**********Buscar Jugador**********");
     Console.WriteLine("Ingrese la cédula del jugador a buscar: ");
     string cedulaIngresada = Console.ReadLine();
-    Jugador objJugador = Database.Jugadores.Find(j => j.Cedula == cedulaIngresada);
+    var contex = new TorneoDbContext();
+    Jugador objJugador = contex.Jugadores.Where(j => j.Cedula == cedulaIngresada).FirstOrDefault();
     if (objJugador != null)
     {
         Console.WriteLine("Jugador encontrado:");
@@ -415,6 +418,7 @@ void listarJugadores()
 {
     Console.Clear();
     Console.WriteLine("**********Jugadores Creados**********");
+    var contex = new TorneoDbContext();
     foreach (Jugador jugador in Database.Jugadores)
     {
         jugador.Imprimir();
