@@ -1,4 +1,5 @@
-﻿using TorneoPOO_CRAMIREZ.Datos;
+﻿using Microsoft.EntityFrameworkCore;
+using TorneoPOO_CRAMIREZ.Datos;
 using TorneoPOO_CRAMIREZ.Generales;
 using TorneoPOO_CRAMIREZ.Models;
 
@@ -89,26 +90,40 @@ void eliminarPartido()
     Console.Clear();
     Console.WriteLine("**********Eliminar Partido**********");
 
-    Console.Write("Nombre del equipo local: ");
+    Console.Write("Ingrese el nombre del equipo local: ");
     string nombre = Console.ReadLine();
 
-    Partido partido = Database.Partidos.Find(p => p.Local.Nombre.ToUpper() == nombre.ToUpper());
-
-    if (partido != null)
+    using (var context = new TorneoDbContext())
     {
-        partido.Imprimir();
+        Partido partido = context.Partidos
+            .Include(p => p.Local)
+            .Include(p => p.Visitante)
+            .FirstOrDefault(p =>
+                p.Local.Nombre.ToUpper() == nombre.ToUpper());
 
-        Console.Write("¿Desea eliminar este partido? S/N: ");
-
-        if (Console.ReadLine().ToUpper() == "S")
+        if (partido != null)
         {
-            Database.Partidos.Remove(partido);
-            Console.WriteLine("Partido eliminado correctamente.");
+            Console.WriteLine("Partido encontrado:");
+            partido.Imprimir();
+
+            Console.Write("¿Desea eliminar este partido? S/N: ");
+
+            if (Console.ReadLine().ToUpper() == "S")
+            {
+                context.Partidos.Remove(partido);
+                context.SaveChanges();
+
+                Console.WriteLine("Partido eliminado correctamente.");
+            }
+            else
+            {
+                Console.WriteLine("Operación cancelada.");
+            }
         }
-    }
-    else
-    {
-        Console.WriteLine("Partido no encontrado.");
+        else
+        {
+            Console.WriteLine("Partido no encontrado.");
+        }
     }
 
     Console.ReadLine();
@@ -118,24 +133,36 @@ void actualizarPartido()
     Console.Clear();
     Console.WriteLine("**********Actualizar Partido**********");
 
-    Console.Write("Nombre del equipo local: ");
+    Console.Write("Ingrese el nombre del equipo local: ");
     string nombre = Console.ReadLine();
 
-    Partido partido = Database.Partidos.Find(p => p.Local.Nombre.ToUpper() == nombre.ToUpper());
-
-    if (partido != null)
+    using (var context = new TorneoDbContext())
     {
-        Console.Write("Nuevo lugar: ");
-        partido.Lugar = Console.ReadLine();
+        Partido partido = context.Partidos
+            .Include(p => p.Local)
+            .Include(p => p.Visitante)
+            .FirstOrDefault(p =>
+                p.Local.Nombre.ToUpper() == nombre.ToUpper());
 
-        Console.Write("Nueva fecha: ");
-        partido.Fecha = Convert.ToDateTime(Console.ReadLine());
+        if (partido != null)
+        {
+            Console.WriteLine("Partido encontrado:");
+            partido.Imprimir();
 
-        Console.WriteLine("Partido actualizado.");
-    }
-    else
-    {
-        Console.WriteLine("Partido no encontrado.");
+            Console.Write("Nuevo lugar: ");
+            partido.Lugar = Console.ReadLine();
+
+            Console.Write("Nueva fecha (dd/mm/yyyy): ");
+            partido.Fecha = Convert.ToDateTime(Console.ReadLine());
+
+            context.SaveChanges();
+
+            Console.WriteLine("Partido actualizado correctamente.");
+        }
+        else
+        {
+            Console.WriteLine("Partido no encontrado.");
+        }
     }
 
     Console.ReadLine();
@@ -145,18 +172,28 @@ void buscarPartido()
     Console.Clear();
     Console.WriteLine("**********Buscar Partido**********");
 
-    Console.Write("Nombre del equipo local: ");
+    Console.Write("Ingrese el nombre del equipo local: ");
     string nombre = Console.ReadLine();
 
-    Partido partido = Database.Partidos.Find(p => p.Local.Nombre.ToUpper() == nombre.ToUpper());
+    using (var context = new TorneoDbContext())
+    {
+        Partido partido = context.Partidos
+            .Include(p => p.Local)
+            .Include(p => p.Visitante)
+            .FirstOrDefault(p =>
+                p.Local.Nombre.ToUpper() == nombre.ToUpper());
 
-    if (partido != null)
-    {
-        partido.Imprimir();
-    }
-    else
-    {
-        Console.WriteLine("Partido no encontrado.");
+        if (partido != null)
+        {
+            Console.WriteLine("Partido encontrado:");
+            Console.WriteLine("-----------------------------------");
+
+            partido.Imprimir();
+        }
+        else
+        {
+            Console.WriteLine("Partido no encontrado.");
+        }
     }
 
     Console.ReadLine();
@@ -166,10 +203,25 @@ void listarPartidos()
     Console.Clear();
     Console.WriteLine("**********Lista de Partidos**********");
 
-    foreach (Partido partido in Database.Partidos)
+    using (var context = new TorneoDbContext())
     {
-        partido.Imprimir();
-        Console.WriteLine("--------------------------------");
+        List<Partido> partidos = context.Partidos
+            .Include(p => p.Local)
+            .Include(p => p.Visitante)
+            .ToList();
+
+        if (partidos.Count == 0)
+        {
+            Console.WriteLine("No existen partidos registrados.");
+        }
+        else
+        {
+            foreach (Partido partido in partidos)
+            {
+                partido.Imprimir();
+                Console.WriteLine("-----------------------------------");
+            }
+        }
     }
 
     Console.ReadLine();
@@ -182,59 +234,95 @@ void crearPartido()
     Console.Write("Nombre del equipo local: ");
     string local = Console.ReadLine();
 
-    Equipo objLocal = Database.Equipos.Find(e => e.Nombre.ToUpper() == local.ToUpper());
-
     Console.Write("Nombre del equipo visitante: ");
     string visitante = Console.ReadLine();
 
-    Equipo objVisitante = Database.Equipos.Find(e => e.Nombre.ToUpper() == visitante.ToUpper());
-
-    if (objLocal != null && objVisitante != null)
+    using (var context = new TorneoDbContext())
     {
-        Console.Write("Lugar: ");
+        Equipo objLocal = context.Equipos
+            .FirstOrDefault(e => e.Nombre.ToUpper() == local.ToUpper());
+
+        Equipo objVisitante = context.Equipos
+            .FirstOrDefault(e => e.Nombre.ToUpper() == visitante.ToUpper());
+
+        if (objLocal == null)
+        {
+            Console.WriteLine("El equipo local no existe.");
+            Console.ReadLine();
+            return;
+        }
+
+        if (objVisitante == null)
+        {
+            Console.WriteLine("El equipo visitante no existe.");
+            Console.ReadLine();
+            return;
+        }
+
+        if (objLocal.Id == objVisitante.Id)
+        {
+            Console.WriteLine("El equipo local y visitante no pueden ser iguales.");
+            Console.ReadLine();
+            return;
+        }
+
+        Console.Write("Ingrese el lugar: ");
         string lugar = Console.ReadLine();
 
-        Console.Write("Fecha (dd/mm/yyyy): ");
+        Console.Write("Ingrese la fecha (dd/mm/yyyy): ");
         DateTime fecha = Convert.ToDateTime(Console.ReadLine());
 
-        Partido partido = new Partido(objLocal, objVisitante, fecha, lugar);
+        Partido partido = new Partido(
+            objLocal,
+            objVisitante,
+            fecha,
+            lugar
+        );
 
-        Database.Partidos.Add(partido);
+        context.Partidos.Add(partido);
+        context.SaveChanges();
 
         Console.WriteLine("Partido creado correctamente.");
-    }
-    else
-    {
-        Console.WriteLine("Uno de los equipos no existe.");
     }
 
     Console.ReadLine();
 }
-
 void eliminarEquipo()
 {
     Console.Clear();
     Console.WriteLine("**********Eliminar Equipo**********");
+
     Console.Write("Ingrese el nombre del equipo: ");
     string nombre = Console.ReadLine();
 
-    Equipo objEquipo = Database.Equipos.Find(e => e.Nombre.ToUpper() == nombre.ToUpper());
-
-    if (objEquipo != null)
+    using (var context = new TorneoDbContext())
     {
-        objEquipo.Imprimir();
+        Equipo objEquipo = context.Equipos
+            .FirstOrDefault(e => e.Nombre.ToUpper() == nombre.ToUpper());
 
-        Console.Write("¿Desea eliminar este equipo? S/N: ");
-
-        if (Console.ReadLine().ToUpper() == "S")
+        if (objEquipo != null)
         {
-            Database.Equipos.Remove(objEquipo);
-            Console.WriteLine("Equipo eliminado.");
+            objEquipo.Imprimir();
+
+            Console.Write("¿Desea eliminar este equipo? S/N: ");
+            string respuesta = Console.ReadLine().ToUpper();
+
+            if (respuesta == "S")
+            {
+                context.Equipos.Remove(objEquipo);
+                context.SaveChanges();
+
+                Console.WriteLine("Equipo eliminado correctamente.");
+            }
+            else
+            {
+                Console.WriteLine("Operación cancelada.");
+            }
         }
-    }
-    else
-    {
-        Console.WriteLine("Equipo no encontrado.");
+        else
+        {
+            Console.WriteLine("Equipo no encontrado.");
+        }
     }
 
     Console.ReadLine();
@@ -244,29 +332,37 @@ void actualizarEquipo()
 {
     Console.Clear();
     Console.WriteLine("**********Actualizar Equipo**********");
+
     Console.Write("Ingrese el nombre del equipo: ");
     string nombre = Console.ReadLine();
 
-    Equipo objEquipo = Database.Equipos.Find(e => e.Nombre.ToUpper() == nombre.ToUpper());
-
-    if (objEquipo != null)
+    using (var context = new TorneoDbContext())
     {
-        objEquipo.Imprimir();
+        Equipo objEquipo = context.Equipos
+            .FirstOrDefault(e => e.Nombre.ToUpper() == nombre.ToUpper());
 
-        Console.Write("Nuevo nombre: ");
-        objEquipo.Nombre = Console.ReadLine();
+        if (objEquipo != null)
+        {
+            Console.WriteLine("Equipo encontrado:");
+            objEquipo.Imprimir();
 
-        Console.Write("Nueva ciudad: ");
-        objEquipo.Ciudad = Console.ReadLine();
+            Console.Write("Nuevo nombre: ");
+            objEquipo.Nombre = Console.ReadLine();
 
-        Console.Write("Nuevo color: ");
-        objEquipo.Color = Console.ReadLine();
+            Console.Write("Nueva ciudad: ");
+            objEquipo.Ciudad = Console.ReadLine();
 
-        Console.WriteLine("Equipo actualizado correctamente.");
-    }
-    else
-    {
-        Console.WriteLine("Equipo no encontrado.");
+            Console.Write("Nuevo color: ");
+            objEquipo.Color = Console.ReadLine();
+
+            context.SaveChanges();
+
+            Console.WriteLine("Equipo actualizado correctamente.");
+        }
+        else
+        {
+            Console.WriteLine("Equipo no encontrado.");
+        }
     }
 
     Console.ReadLine();
@@ -276,19 +372,29 @@ void buscarEquipo()
 {
     Console.Clear();
     Console.WriteLine("**********Buscar Equipo**********");
-    Console.WriteLine("Ingrese el nombre del equipo a buscar: ");
-    string nombre_ingresado = Console.ReadLine();
-    Equipo objEquipo = Database.Equipos.Find(j => j.Nombre.ToUpper() == nombre_ingresado.ToUpper());
-    if (objEquipo != null)
+
+    Console.Write("Ingrese el nombre del equipo: ");
+    string nombre = Console.ReadLine();
+
+    using (var context = new TorneoDbContext())
     {
-        Console.WriteLine("Equipo encontrado:");
-        Console.WriteLine("-----------------------------------");
-        objEquipo.Imprimir();
+        Equipo objEquipo = context.Equipos
+            .Include(e => e.Jugadores)
+            .FirstOrDefault(e => e.Nombre.ToUpper() == nombre.ToUpper());
+
+        if (objEquipo != null)
+        {
+            Console.WriteLine("Equipo encontrado:");
+            Console.WriteLine("-----------------------------------");
+
+            objEquipo.Imprimir();
+        }
+        else
+        {
+            Console.WriteLine("Equipo no encontrado.");
+        }
     }
-    else
-    {
-        Console.WriteLine("Equipo no encontrado.");
-    }
+
     Console.ReadLine();
 }
 
@@ -296,11 +402,27 @@ void listarEquipos()
 {
     Console.Clear();
     Console.WriteLine("**********Equipos Creados**********");
-    foreach (Equipo equipo in Database.Equipos)
+
+    using (var context = new TorneoDbContext())
     {
-        equipo.Imprimir();
-        Console.WriteLine("-----------------------------------");
+        List<Equipo> equipos = context.Equipos
+            .Include(e => e.Jugadores)
+            .ToList();
+
+        if (equipos.Count == 0)
+        {
+            Console.WriteLine("No existen equipos registrados.");
+        }
+        else
+        {
+            foreach (Equipo equipo in equipos)
+            {
+                equipo.Imprimir();
+                Console.WriteLine("-----------------------------------");
+            }
+        }
     }
+
     Console.ReadLine();
 }
 
@@ -418,15 +540,20 @@ void listarJugadores()
 {
     Console.Clear();
     Console.WriteLine("**********Jugadores Creados**********");
-    var contex = new TorneoDbContext();
-    foreach (Jugador jugador in Database.Jugadores)
+
+    using (var context = new TorneoDbContext())
     {
-        jugador.Imprimir();
-        Console.WriteLine("-----------------------------------");
+        List<Jugador> jugadores = context.Jugadores.ToList();
+
+        foreach (Jugador jugador in jugadores)
+        {
+            jugador.Imprimir();
+            Console.WriteLine("-----------------------------------");
+        }
     }
+
     Console.ReadLine();
 }
-
 void CrearPartido()
 {
     Console.Clear();
@@ -436,40 +563,61 @@ void crearEquipo()
 {
     Console.Clear();
     Console.WriteLine("**********Crear Equipo**********");
-    Console.WriteLine("Ingrese el nombre del equipo: ");
+
+    Console.Write("Ingrese el nombre del equipo: ");
     string nombre = Console.ReadLine();
-    Console.WriteLine("Ingrese la ciudad del equipo: ");
+
+    Console.Write("Ingrese la ciudad del equipo: ");
     string ciudad = Console.ReadLine();
-    Console.WriteLine("Ingrese el color del equipo: ");
+
+    Console.Write("Ingrese el color del equipo: ");
     string color = Console.ReadLine();
 
     Equipo objEquipo = new Equipo(nombre, ciudad, color);
-    Console.WriteLine("Equipo creado exitosamente.");
-    string respuesta = "";
-    do
+
+    using (var context = new TorneoDbContext())
     {
-        Console.WriteLine("¿Desea Ingresar Jugadores? S/N");
-        respuesta = Console.ReadLine();
-        if (respuesta.ToUpper() == "S")
+        // Guardar el equipo en la base de datos
+        context.Equipos.Add(objEquipo);
+        context.SaveChanges();
+
+        Console.WriteLine("Equipo creado exitosamente.");
+
+        string respuesta;
+
+        do
         {
-            Console.WriteLine("Ingrese la cédula del jugador a fichar");
-            string cedulaIngresada = Console.ReadLine();
-            Jugador objJugador = Database.Jugadores.Find(x => x.Cedula == cedulaIngresada);
-            if (objJugador != null)
-            {
-                objEquipo.AgregarJugador(objJugador);
-                objJugador.Fichar(objEquipo);
-            }
-            else
-            {
-                Console.WriteLine("Jugador no encontrado.");
-            }
-        }
+            Console.Write("¿Desea ingresar un jugador al equipo? S/N: ");
+            respuesta = Console.ReadLine().ToUpper();
 
-    } while (respuesta == "S");
-    Database.Equipos.Add(objEquipo);
+            if (respuesta == "S")
+            {
+                Console.Write("Ingrese la cédula del jugador: ");
+                string cedulaIngresada = Console.ReadLine();
+
+                Jugador objJugador = context.Jugadores
+                    .FirstOrDefault(j => j.Cedula == cedulaIngresada);
+
+                if (objJugador != null)
+                {
+                    objJugador.EquipoId = objEquipo.Id;
+
+                    context.SaveChanges();
+
+                    Console.WriteLine(
+                        $"Jugador {objJugador.Nombre} asignado correctamente al equipo.");
+                }
+                else
+                {
+                    Console.WriteLine("Jugador no encontrado.");
+                }
+
+            }
+
+        } while (respuesta == "S");
+    }
+
     Console.ReadLine();
-
 }
 
 void crearJugador()
