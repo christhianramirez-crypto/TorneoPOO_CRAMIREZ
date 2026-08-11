@@ -298,11 +298,15 @@ void eliminarEquipo()
     using (var context = new TorneoDbContext())
     {
         Equipo objEquipo = context.Equipos
-            .FirstOrDefault(e => e.Nombre.ToUpper() == nombre.ToUpper());
+            .Include(e => e.Jugadores)
+            .FirstOrDefault(e =>
+                e.Nombre.ToUpper() == nombre.ToUpper());
 
         if (objEquipo != null)
         {
+            Console.WriteLine("-----------------------------------");
             objEquipo.Imprimir();
+            Console.WriteLine("-----------------------------------");
 
             Console.Write("¿Desea eliminar este equipo? S/N: ");
             string respuesta = Console.ReadLine().ToUpper();
